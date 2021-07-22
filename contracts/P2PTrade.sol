@@ -85,8 +85,11 @@ contract P2PTrade is ReentrancyGuard {
             else if (item.assetType == ERC721) safeERC721TransferFrom(item.contractAddress, walletB, msg.sender, item.id);
             else if (item.assetType == ERC1155) safeERC1155TransferFrom(item.contractAddress, walletB, msg.sender, item.amount, item.id);
         }
-        nonces[msg.sender] = nonces[msg.sender] + 1;
-        nonces[walletB] = nonces[walletB] + 1;
+        // Overflow is possible, but not-likely to be reached.
+        unchecked {
+            nonces[msg.sender] = nonces[msg.sender] + 1;
+            nonces[walletB] = nonces[walletB] + 1;
+        }
         emit Swap(msg.sender, walletB, fromA, fromB);
     }
 
